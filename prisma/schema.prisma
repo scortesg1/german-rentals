@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Car {
+  id           String   @id @default(uuid())
+  userId       String   @db.Text
+  name         String   @db.Text
+  hp           String   @db.Text
+  transmission String   @db.Text
+  people       String   @db.Text
+  photo        String   @db.Text
+  pricePerDay  String   @db.Text
+  fuel       String   @db.Text
+  type         String   @db.Text
+  isPublic  Boolean?
+
+  orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id          String   @id @default(uuid())
+  carId       String   @db.Text
+  carModel    String   @db.Text
+  userId      String   @db.Text
+  startDate   DateTime @default(now())
+  endDate     DateTime @default(now())
+  status      String   @db.Text
+  totalAmount String   @db.Text
+
+  car Car @relation(fields: [carId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([carId])
+  @@index([userId])
+}
